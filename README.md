@@ -19,7 +19,7 @@ Traditional legal information systems rely heavily on rigid keyword matching (BM
 
 **PSR** resolves this by introducing a highly robust, fault-tolerant **three-stage neural retrieval pipeline**:
 
-* **Stage 0 (LLM Query Expansion):** Intercepts colloquial user language (e.g., *"husband beating wife daily"*) and leverages a locally hosted `Qwen2.5-0.5B-Instruct` model to autonomously expand the query with formal legal terminology and statutory synonyms (e.g., *"Domestic Violence Act, Section 498A IPC, physical cruelty"*).
+* **Stage 0 (Serverless LLM Query Expansion):** Intercepts colloquial user language (e.g., *"husband beating wife daily"*) and leverages the Hugging Face Serverless Inference API to ping a 7-Billion parameter LLM (`Zephyr-7b-beta`). The model autonomously translates the query into formal legal terminology and statutory synonyms (e.g., *"Domestic Violence Act, Section 498A IPC, physical cruelty"*) with zero RAM overhead on the host machine.
 * **Stage 1 (Hybrid Semantic Retrieval):** Utilizes `BAAI/bge-m3` to simultaneously compute dense vector embeddings (1024-dimensional continuous vector space) for abstract semantic meaning and sparse vector token weights for exact match precision on specific legal acts or sections.
 * **Stage 2 (Neural Reranking):** Leverages a high-performance Cross-Encoder model (`BAAI/bge-reranker-base`) to evaluate the joint attention matrix between the original user query and the combined candidate pools fetched from Qdrant, sorting the output by absolute contextual relevance.
 
@@ -32,9 +32,9 @@ Traditional legal information systems rely heavily on rigid keyword matching (BM
              │
              ▼
 ┌─────────────────────────────────────────────────────────┐
-│        Stage 0: Local LLM Legal Query Expansion         │
-│  - Zero-shot inference via local Qwen2.5-0.5B model     │
-│  - Lexical transformation: Colloquial -> Legal Lexicon   │
+│      Stage 0: Serverless LLM Legal Query Expansion      │
+│  - Zero-shot inference via Hugging Face InferenceClient │
+│  - Lexical transformation: Colloquial -> Legal Lexicon  │
 └────────────────────┬────────────────────────────────────┘
                      │
                      ▼
