@@ -146,7 +146,7 @@
                 const response = await fetch(`${API_BASE}/api/search`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query, top_k: 20 })
+                    body: JSON.stringify({ query: query, top_k: 40 })
                 });
 
                 if (!response.ok) throw new Error("Search execution failed.");
@@ -199,23 +199,22 @@
                 return;
             }
 
-            results.forEach((item, index) => {
+            results.forEach((item) => {
                 const p = item.payload;
                 const isCase = p._source_type === "cases_meta";
                 
                 const rawScore = item.score;
                 let displayScore = (1 / (1 + Math.exp(-rawScore))) * 100;
-                let scoreColor = displayScore > 75 ? "bg-emerald-50 text-emerald-700 border-emerald-200" : (displayScore > 45 ? "bg-amber-50 text-amber-700 border-amber-200" : "bg-slate-50 text-slate-600 border-slate-200");
 
+                // Relevance filtration limit to catch obvious pipeline noise
+                if (displayScore < 50.0) {
+                    return; 
+                }
+
+                // Clean tile shell with misleading quantitative metrics removed
                 let cardHTML = `<div class="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition duration-200 flex flex-col justify-between overflow-hidden">
                     <div class="h-1.5 w-full ${isCase ? 'bg-blue-500' : 'bg-purple-500'}"></div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
-                            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Overall Rank: #${index + 1}</span>
-                            <span class="text-xs font-bold px-2.5 py-1 rounded-md border ${scoreColor}">
-                                Match: ${displayScore.toFixed(1)}%
-                            </span>
-                        </div>`;
+                    <div class="p-6">`;
 
                 if (isCase) {
                     precedentsCount++;
@@ -239,7 +238,7 @@
                             <span class="bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold px-2.5 py-1 rounded-md">${p.act_name || "Family Law Asset"}</span>
                             <span class="bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold px-2.5 py-1 rounded-md">Sec: ${p.section_number || "N/A"}</span>
                         </div>
-                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-100 mb-3">
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
                             <h4 class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Statutory Extract</h4>
                             <p class="text-slate-700 text-sm leading-relaxed">${p.short_summary}</p>
                         </div>`;
