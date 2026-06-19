@@ -10,7 +10,7 @@
 ---
 
 ## 🚀 Live Links
-* **Interactive Frontend:** (https://subramani2005.github.io/PSR-Precedents-and-Statutes-Retrieval/)
+* **Interactive Frontend:** [https://subramani2005.github.io/PSR-Precedents-and-Statutes-Retrieval/](https://subramani2005.github.io/PSR-Precedents-and-Statutes-Retrieval/)
 
 ---
 
@@ -51,7 +51,8 @@ Traditional legal information systems rely heavily on rigid keyword matching (BM
 ┌─────────────────────────────────────────────────────────┐
 │               Qdrant Cluster Filtering                  │
 │  - Parallel Dual Prefetch Vector Strategy               │
-│  - Instant Candidate Selection Pool (Top K candidates)   │
+│  - Reciprocal Rank Fusion (RRF) Integration             │
+│  - Instant Candidate Selection Pool (Top K candidates)  │
 └────────────────────┬────────────────────────────────────┘
                      │
                      ▼
