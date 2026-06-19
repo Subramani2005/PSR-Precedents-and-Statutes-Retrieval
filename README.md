@@ -1,19 +1,15 @@
-# PSR-Precedents-and-Statutes-Retrieval-
 # PSR: Precedents and Statutes Retrieval System
 
 ### A Production-Grade Hybrid Neural Search & Cross-Encoder Reranking Architecture for Legal Tech
 
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Qdrant](https://img.shields.io/badge/VectorDB-Qdrant-ff4043?style=for-the-badge&logo=qdrant&logoColor=white)](https://qdrant.tech/)
-[![HuggingFace](https://img.shields.io/badge/AI_Hosting-HuggingFace-yellow?style=for-the-badge&logo=huggingface&logoColor=black)](https://huggingface.co/)
 [![GitHub Pages](https://img.shields.io/badge/Frontend-GitHub_Pages-222222?style=for-the-badge&logo=github&logoColor=white)](https://pages.github.com/)
 
 ---
 
-## 🚀 Live Links
+## 🚀 Live Link
 * **Interactive Frontend:** [Your GitHub Pages Link Here]
-* **Production API Gateway:** [Your Hugging Face Space Direct Link Here]/docs
-* **Public Dataset Card:** [Your Hugging Face Dataset or Kaggle Link Here]
 
 ---
 
