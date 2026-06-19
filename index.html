@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSR | Precedent & Statute Retrieval</title>
+    <title>PSR | Unified Legal Retrieval</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Smooth custom scrollbar styling */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -19,7 +18,7 @@
         <div class="max-w-5xl mx-auto flex justify-between items-center">
             <div>
                 <h1 class="text-3xl font-bold tracking-tight">PSR System</h1>
-                <p class="text-indigo-200 text-sm mt-1">Hybrid Semantic Search + Cross-Encoder Reranking</p>
+                <p class="text-indigo-200 text-sm mt-1">Unified Legal Search with Local LLM Query Expansion</p>
             </div>
             <div class="flex items-center space-x-2 bg-indigo-950/50 px-3 py-1.5 rounded-lg border border-indigo-700/30">
                 <span id="status-dot" class="h-3 w-3 rounded-full bg-red-500 animate-pulse"></span>
@@ -31,111 +30,120 @@
     <main class="flex-grow max-w-5xl mx-auto w-full p-6 md:p-8">
         
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Legal Query / Scenario</label>
             <div class="flex flex-col md:flex-row gap-4">
                 
-                <div class="w-full md:w-1/4">
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Search Domain</label>
-                    <select id="collection-select" class="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-3 appearance-none cursor-pointer">
-                        <option value="cases_meta">🏛️ Legal Precedents (Cases)</option>
-                        <option value="indian_family_law_qdrant">📜 Statutes (Family Law)</option>
-                    </select>
-                </div>
-
-                <div class="flex-grow">
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Legal Query / Scenario</label>
-                    <div class="relative">
-                        <input type="text" id="search-input" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 pl-10" placeholder="Describe the legal issue or specify sections (e.g., mutual consent divorce)...">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
-                        </div>
+                <div class="relative flex-grow">
+                    <input type="text" id="search-input" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 pl-10" placeholder="e.g., husband is beating his wife daily...">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
                     </div>
                 </div>
 
-                <div class="flex items-end">
-                    <button onclick="performSearch()" id="search-btn" class="w-full md:w-auto text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-200 font-medium rounded-lg text-sm px-8 py-3 transition duration-150 ease-in-out flex items-center justify-center min-w-[120px] h-[46px]">
-                        <span>Search</span>
-                    </button>
+                <button onclick="performSearch()" id="search-btn" class="w-full md:w-auto text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-200 font-medium rounded-lg text-sm px-8 py-3 transition duration-150 ease-in-out flex items-center justify-center min-w-[150px] h-[46px]">
+                    <span>Search All Data</span>
+                </button>
+            </div>
+
+            <div id="expanded-query-container" class="hidden mt-4 p-4 bg-indigo-50 rounded-lg border border-indigo-100 shadow-inner">
+                <div class="flex items-center space-x-2 mb-1">
+                    <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    <p class="text-xs text-indigo-800 font-bold uppercase tracking-wider">AI Expanded Search Scope:</p>
                 </div>
+                <p id="expanded-query-text" class="text-sm text-indigo-700 italic"></p>
             </div>
         </div>
 
         <div id="results-container" class="space-y-4">
             <div class="text-center text-slate-400 py-16 bg-white rounded-xl border border-dashed border-slate-200" id="placeholder-msg">
                 <p class="text-lg font-medium">System Ready</p>
-                <p class="text-sm text-slate-400 mt-1">Submit a search query above to fetch and rerank relevant legal documentation.</p>
+                <p class="text-sm text-slate-400 mt-1">Submit a search query above to simultaneously evaluate Precedents and Statutes.</p>
             </div>
         </div>
     </main>
 
     <footer class="bg-slate-100 border-t border-slate-200 py-4 text-center text-xs text-slate-500">
-        Precedent & Statute Retrieval System &bull; Powered by Qdrant & Hugging Face
+        PSR System &bull; Powered by Qdrant & Hugging Face Local LLMs
     </footer>
 
     <script>
-        // Production API endpoint bound to Hugging Face Spaces free tier 16GB runtime environment
+        // =====================================================================
+        // CONFIGURATION: YOUR HUGGING FACE SPACE URL
+        // =====================================================================
         const API_BASE = "https://subramani2005-psr-backend.hf.space";
 
-        // Automated asynchronous health check to verify backend status on load
+        // Automated STRICT asynchronous health check
         window.addEventListener('DOMContentLoaded', async () => {
             const dot = document.getElementById('status-dot');
             const text = document.getElementById('status-text');
             
             try {
                 const res = await fetch(`${API_BASE}/health`);
-                if (res.ok) {
+                const data = await res.json();
+                
+                // STRICT CHECK: Verifies HF Server is up AND Qdrant is successfully connected
+                if (res.ok && data.database === true) {
                     dot.classList.remove('bg-red-500', 'animate-pulse');
                     dot.classList.add('bg-emerald-500');
                     text.textContent = "Backend Connected";
                     text.classList.remove('text-indigo-100');
                     text.classList.add('text-emerald-400');
                 } else {
-                    throw new Error("Backend returned unhealthy status.");
+                    throw new Error("Database disconnected.");
                 }
             } catch (e) {
+                dot.classList.remove('animate-pulse');
                 dot.classList.add('bg-red-500');
-                text.textContent = "Backend Offline / Building";
+                text.textContent = "Database Error / Backend Down";
                 text.classList.add('text-red-400');
-                console.error("Connection failed to Hugging Face space:", e);
             }
         });
 
-        // Trigger search functionality when pressing 'Enter' key inside the input area
+        // Trigger search functionality when pressing 'Enter' key
         document.getElementById("search-input").addEventListener("keypress", function(event) {
             if (event.key === "Enter") performSearch();
         });
 
-        // Main execution handler for hybrid search and reranking orchestration
+        // Main execution handler
         async function performSearch() {
             const query = document.getElementById("search-input").value.trim();
-            const collection = document.getElementById("collection-select").value;
             const container = document.getElementById("results-container");
             const btn = document.getElementById("search-btn");
+            const expContainer = document.getElementById("expanded-query-container");
 
             if (!query) return;
 
             // UI Loading state update
             btn.disabled = true;
+            expContainer.classList.add('hidden');
             btn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
             container.innerHTML = `
                 <div class="text-center py-16 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col items-center justify-center">
                     <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
-                    <p class="text-indigo-600 font-medium">Executing Hybrid Neural Search...</p>
-                    <p class="text-slate-400 text-xs mt-1">Retrieving vector embeddings and performing Cross-Encoder reranking.</p>
+                    <p class="text-indigo-600 font-medium">Expanding Query & Reranking Documents...</p>
+                    <p class="text-slate-400 text-xs mt-1">Running Qwen-0.5B locally followed by Cross-Encoder scoring.</p>
                 </div>`;
 
             try {
+                // Notice: 'collection' parameter is removed, we just pass the query
                 const response = await fetch(`${API_BASE}/api/search`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query, collection: collection, top_k: 5 })
+                    body: JSON.stringify({ query: query, top_k: 10 })
                 });
 
                 if (!response.ok) throw new Error("Search execution failed on the remote server.");
                 const data = await response.json();
                 
-                renderResults(data.results, collection);
+                // Show expanded query if the LLM successfully modified it
+                if (data.expanded_query && data.expanded_query !== query) {
+                    document.getElementById("expanded-query-text").textContent = data.expanded_query;
+                    expContainer.classList.remove('hidden');
+                }
+
+                renderResults(data.results);
             } catch (error) {
                 container.innerHTML = `
                     <div class="p-4 border border-red-200 rounded-xl bg-red-50 text-red-800 shadow-sm">
@@ -143,16 +151,16 @@
                             <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                             <span>API Connection Failure</span>
                         </div>
-                        <p class="text-sm mt-1 text-red-700">Unable to complete search request. Please check that your Hugging Face Space is active, running, and that the direct URL configured in this file is correct.</p>
+                        <p class="text-sm mt-1 text-red-700">Unable to complete search request. Please check that your Hugging Face Space is active, running, and that your Qdrant secrets are correctly configured.</p>
                     </div>`;
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<span>Search</span>`;
+                btn.innerHTML = `<span>Search All Data</span>`;
             }
         }
 
-        // Structural UI renderer tailored dynamically per collection data schema
-        function renderResults(results, collection) {
+        // Structural UI renderer tailored dynamically to handle BOTH schemas simultaneously
+        function renderResults(results) {
             const container = document.getElementById("results-container");
             container.innerHTML = "";
 
@@ -166,29 +174,36 @@
             }
 
             results.forEach((item, index) => {
+                const p = item.payload;
+                
+                // Identify the source type injected by the backend
+                const isCase = p._source_type === "cases_meta";
+                
                 const rawScore = item.score;
                 // Min-Max sigmoid scaling approximation to present logit scores cleanly as confidence values
                 let displayScore = (1 / (1 + Math.exp(-rawScore))) * 100;
-                
                 let scoreColor = displayScore > 75 ? "bg-emerald-50 text-emerald-700 border-emerald-200" : (displayScore > 45 ? "bg-amber-50 text-amber-700 border-amber-200" : "bg-slate-50 text-slate-600 border-slate-200");
 
-                let cardHTML = `<div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition duration-200 flex flex-col justify-between">`;
-                
-                // Card Meta-Header
-                cardHTML += `
-                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
-                        <div class="flex items-center space-x-2">
-                            <span class="bg-indigo-600 text-white text-xs font-bold h-6 w-6 flex items-center justify-center rounded-full">#${index + 1}</span>
-                            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">Relevance Rank</span>
-                        </div>
-                        <span class="text-xs font-semibold px-2.5 py-1 rounded-md border ${scoreColor}">
-                            Match Score: ${displayScore.toFixed(1)}%
-                        </span>
-                    </div>`;
+                // Dynamic border color based on document type
+                let cardHTML = `<div class="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition duration-200 flex flex-col justify-between overflow-hidden">
+                    
+                    <div class="h-1.5 w-full ${isCase ? 'bg-blue-500' : 'bg-purple-500'}"></div>
+                    
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
+                            <div class="flex items-center space-x-3">
+                                <span class="bg-slate-800 text-white text-xs font-bold h-6 w-6 flex items-center justify-center rounded-full shadow-sm">#${index + 1}</span>
+                                <span class="${isCase ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-purple-50 text-purple-700 border-purple-200'} border text-[10px] font-bold uppercase px-2 py-1 rounded tracking-wider">
+                                    ${isCase ? '🏛️ Precedent' : '📜 Statute'}
+                                </span>
+                            </div>
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-md border ${scoreColor}">
+                                Match: ${displayScore.toFixed(1)}%
+                            </span>
+                        </div>`;
 
-                // Handle Precedents (Cases Meta) Render Schema
-                if (collection === "cases_meta") {
-                    const p = item.payload;
+                // Render Precedent Schema
+                if (isCase) {
                     cardHTML += `
                         <h3 class="text-lg font-bold text-slate-900 leading-snug mb-2">${p.case_title || "Untitled Judgment Record"}</h3>
                         <div class="flex flex-wrap gap-2 mb-4">
@@ -196,36 +211,33 @@
                             <span class="bg-slate-100 text-slate-600 text-xs font-medium px-2.5 py-1 rounded-md">⚖️ Class: ${p.classification || "General Civil"}</span>
                         </div>
                         <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Contextual Summary</h4>
+                            <h4 class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Contextual Summary</h4>
                             <p class="text-slate-700 text-sm leading-relaxed whitespace-pre-line">${p.case_summary}</p>
                         </div>`;
                 } 
-                // Handle Statutes (Indian Family Law) Render Schema
+                // Render Statute Schema
                 else {
-                    const p = item.payload;
                     cardHTML += `
                         <h3 class="text-lg font-bold text-slate-900 leading-snug mb-2">${p.title || "Statutory Provision Block"}</h3>
                         <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="bg-blue-50 text-blue-700 border border-blue-100 text-xs font-semibold px-2.5 py-1 rounded-md">Act: ${p.act_name || "Family Law Asset"}</span>
-                            <span class="bg-purple-50 text-purple-700 border border-purple-100 text-xs font-semibold px-2.5 py-1 rounded-md">Section: ${p.section_number || "N/A"}</span>
-                            <span class="bg-amber-50 text-amber-700 border border-amber-100 text-xs font-semibold px-2.5 py-1 rounded-md">Target: ${p.applicability || "Universal"}</span>
+                            <span class="bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold px-2.5 py-1 rounded-md">Act: ${p.act_name || "Family Law Asset"}</span>
+                            <span class="bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold px-2.5 py-1 rounded-md">Section: ${p.section_number || "N/A"}</span>
                         </div>
                         <div class="bg-slate-50 p-4 rounded-lg border border-slate-100 mb-3">
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Statutory Extract</h4>
+                            <h4 class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Statutory Extract</h4>
                             <p class="text-slate-700 text-sm leading-relaxed">${p.short_summary}</p>
                         </div>`;
                     
-                    // Render associated keyword markers if present
                     if (p.keywords && p.keywords.length > 0) {
                         cardHTML += `<div class="flex flex-wrap gap-1.5 mt-2">`;
                         p.keywords.slice(0, 6).forEach(kw => {
-                            cardHTML += `<span class="text-[11px] font-medium bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded border border-indigo-100/50">#${kw}</span>`;
+                            cardHTML += `<span class="text-[10px] font-medium bg-white text-slate-500 px-2 py-0.5 rounded border border-slate-200 shadow-sm">#${kw}</span>`;
                         });
                         cardHTML += `</div>`;
                     }
                 }
 
-                cardHTML += `</div>`;
+                cardHTML += `</div></div>`;
                 container.innerHTML += cardHTML;
             });
         }
